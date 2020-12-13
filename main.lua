@@ -4,14 +4,14 @@ local awesometryagain = love.graphics.newImage('resources/awesometryagain.jpg')
 local awesomequit = love.graphics.newImage('resources/awesomequit.jpg')
 local gameovertryagain = love.graphics.newImage('resources/gameovertryagain.jpg')
 local gameoverquit = love.graphics.newImage('resources/gameoverquit.jpg')
-local backgroundbanget = love.graphics.newImage('resources/backgroundbanget.jpg')
+local background = love.graphics.newImage('resources/background.jpg')
 local Player = require("class_player")
-local Asteroid = require("class_asteroid")
-local Asteroid2 = require("class_asteroid2")
+local virus = require("class_virus")
+local virus2 = require("class_virus2")
 local Bullet = require("class_bullet")
 local Collision = require("Collide")
-total_asteroids = 10
-total_asteroids2 = 120
+total_viruss = 103
+total_viruss2 = 120
 life = 3
 score = 0
 stage = 1
@@ -28,8 +28,8 @@ function love.load()
     bullet_sound = love.audio.newSource("resources/bullet.wav", "static")
     player_image = love.graphics.newImage("resources/player.png")
     player_ship = Player:new(nil)
-    asteroids = Asteroid:load_asteroids(total_asteroids, player_ship.x, player_ship.y)
-    asteroids2 = Asteroid2:load_asteroids(total_asteroids2, player_ship.x, player_ship.y)
+    viruss = virus:load_viruss(total_viruss, player_ship.x, player_ship.y)
+    viruss2 = virus2:load_viruss(total_viruss2, player_ship.x, player_ship.y)
     bullets = {}
 end
 
@@ -47,7 +47,7 @@ function love.draw()
     elseif gamestate == "winnerquit" then
         love.graphics.draw(awesomequit, 0, 0)
     elseif gamestate == "play" then
-        love.graphics.draw(backgroundbanget, 0, 0)
+        love.graphics.draw(background, 0, 0)
         love.graphics.print("LIFE : " .. life.."", 10, 25)
         love.graphics.print("SCORE  : " .. score, 10, 50)
         love.graphics.print("STAGE " .. stage, 350, 25)
@@ -58,12 +58,12 @@ function love.draw()
             1, 1, player_ship.width / 2, player_ship.height / 2)
         end
 
-        for _, v in ipairs(asteroids) do
+        for _, v in ipairs(viruss) do
             love.graphics.draw(v.image, v.x, v.y, math.rad(v.rotation),
             v.scale, v.scale, v.width / 2, v.height / 2)
         end
 
-        for _, v in ipairs(asteroids2) do
+        for _, v in ipairs(viruss2) do
             love.graphics.draw(v.image, v.x, v.y, math.rad(v.rotation),
             v.scale, v.scale, v.width / 2, v.height / 2)
         end
@@ -77,7 +77,7 @@ function love.update(dt)
     if gamestate == "title" then
         if love.keyboard.isDown("return") then
             gamestate = "play"
-            asteroids = Asteroid:load_asteroids(total_asteroids)
+            viruss = virus:load_viruss(total_viruss)
             life = 3
             score = 0
         elseif love.keyboard.isDown("down") then
@@ -96,8 +96,8 @@ function love.update(dt)
         if love.keyboard.isDown("return") then
             gamestate = "play"
             player_ship = Player:new(nil)
-            total_asteroids = 10
-            asteroids = Asteroid:load_asteroids(total_asteroids)
+            total_viruss = 10
+            viruss = virus:load_viruss(total_viruss)
             life = 3
             score = 0
             stage = 1
@@ -119,8 +119,8 @@ function love.update(dt)
         if love.keyboard.isDown("return") then
             gamestate = "play"
             player_ship = Player:new(nil)
-            total_asteroids = total_asteroids + 2
-            asteroids = Asteroid:load_asteroids(total_asteroids)
+            total_viruss = total_viruss + 2
+            viruss = virus:load_viruss(total_viruss)
             winnersound:stop()
             backsound:setLooping(true)
             backsound:play()
@@ -173,11 +173,11 @@ function love.update(dt)
             end
 
         end
-        for _, v in ipairs(asteroids) do
+        for _, v in ipairs(viruss) do
             update_obj(v, dt)
             v.rotation = v.rotation + v.rotate_speed * dt
         end
-        for _, v in ipairs(asteroids2) do
+        for _, v in ipairs(viruss2) do
             update_obj(v, dt)
             v.rotation = v.rotation + v.rotate_speed * dt
         end
@@ -189,7 +189,7 @@ function love.update(dt)
         if player_ship then
             table.insert(objects, player_ship)
         end
-        for _, v in ipairs(asteroids) do
+        for _, v in ipairs(viruss) do
             table.insert(objects, v)
         end
         for _, v in ipairs(bullets) do
@@ -213,7 +213,7 @@ function love.update(dt)
             player_ship = nil
 
         end
-        local temp_asteroids = {}
+        local temp_viruss = {}
         local temp_bullets = {}
         for _, v in ipairs(objects) do
             if v.is_bullet == true then
@@ -224,13 +224,13 @@ function love.update(dt)
             end
             if v.is_bullet == false then
                 if not v.dead then
-                    table.insert(temp_asteroids, v)
+                    table.insert(temp_viruss, v)
                 else
                     score = score + 1
                 end
             end
         end
-        asteroids = temp_asteroids
+        viruss = temp_viruss
         bullets = temp_bullets
 
         if player_ship == nil then
@@ -243,7 +243,7 @@ function love.update(dt)
                 gameoversound:play()
                 return
             end
-        elseif not player_ship.dead and #asteroids == 0 then
+        elseif not player_ship.dead and #viruss == 0 then
                 gamestate = "winner"
                 stage = stage + 1
                 backsound:stop()
