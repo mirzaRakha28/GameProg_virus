@@ -4,7 +4,7 @@ local util = require("util")
 math.randomseed(os.time())
 
 local t = {}
-t.image = love.graphics.newImage("resources/asteroid.png")
+t.image = love.graphics.newImage("resources/asteroid2.png")
 t.width = t.image:getWidth()
 t.height = t.image:getHeight()
 t.x = 0
@@ -24,18 +24,18 @@ function t:new(obj)
     return obj
 end
 
-function t:load_asteroids(num_asteroids, player_x, player_y)
+function t:load_asteroids(num_asteroids2, player_x, player_y)
     -- load asteroid info, keep away from the player
-    local asteroids = {}
-    for i = 1, num_asteroids do
-        local asteroid = t:new{ x = player_x, y = player_y }
-        while util.distance(asteroid.x, asteroid.y, player_x, player_y) < 100 do
-            asteroid.x = math.random(800)
-            asteroid.y = math.random(600)
+    local asteroids2 = {}
+    for i = 1, num_asteroids2 do
+        local asteroid2 = t:new{ x = player_x, y = player_y }
+        while util.distance(asteroid2.x, asteroid2.y, player_x, player_y) < 100 do
+            asteroid2.x = math.random(800)
+            asteroid2.y = math.random(600)
         end
-        table.insert(asteroids, asteroid)
+        table.insert(asteroids2, asteroid2)
     end
-    return asteroids
+    return asteroids2
 end
 
 return t

@@ -10,7 +10,7 @@ t.velocity_x = 0
 t.velocity_y = 0
 t.thrust = 300
 t.rotate_speed = 200
-t.rotation = 0
+t.rotation = love.math.random(1, 360)
 t.dead = false
 
 function t:new(obj)

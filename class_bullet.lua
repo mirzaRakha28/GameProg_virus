@@ -14,8 +14,8 @@ function t:new(player)
     ship_radius = player.width / 2
     obj.x = player.x + math.cos(angle_radians) * ship_radius
     obj.y = player.y + math.sin(angle_radians) * ship_radius
-    obj.velocity_x = player.velocity_x + math.cos(angle_radians) * 700
-    obj.velocity_y = player.velocity_y + math.sin(angle_radians) * 700
+    obj.velocity_x = player.velocity_x + math.cos(angle_radians) * 150
+    obj.velocity_y = player.velocity_y + math.sin(angle_radians) * 150
     setmetatable(obj, self)
     self.__index = self
     return obj
