@@ -1,4 +1,4 @@
---[[ class of player ]]
+-- class for player
 
 local t = {}
 t.image = love.graphics.newImage("resources/player.png")

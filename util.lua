@@ -1,6 +1,4 @@
---[[
 --util functions
-]]
 
 local M = {}
 

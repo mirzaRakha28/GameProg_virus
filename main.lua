@@ -1,3 +1,5 @@
+-- main lua
+
 local menutryagain = love.graphics.newImage('resources/menutryagain.jpg')
 local menuquit = love.graphics.newImage('resources/menuquit.jpg')
 local awesometryagain = love.graphics.newImage('resources/awesometryagain.jpg')
@@ -8,7 +10,7 @@ local background = love.graphics.newImage('resources/background.jpg')
 local Player = require("class_player")
 local virus = require("class_virus")
 local virus2 = require("class_virus2")
-local Bullet = require("class_bullet")
+local Bubble = require("class_bubble")
 local Collision = require("Collide")
 
 -- varieble"
@@ -31,12 +33,12 @@ function love.load()
     backsound:play()
     winnersound = love.audio.newSource("resources/winnersound.mp3", "stream")
     gameoversound = love.audio.newSource("resources/gameoversound.mp3", "stream")
-    bullet_sound = love.audio.newSource("resources/bullet.wav", "static")
+    bubble_sound = love.audio.newSource("resources/bubble.wav", "static")
     player_image = love.graphics.newImage("resources/player.png")
     player_soap = Player:new(nil)
     viruss = virus:load_viruss(total_viruss, player_soap.x, player_soap.y)
     viruss2 = virus2:load_viruss(total_viruss2, player_soap.x, player_soap.y)
-    bullets = {}
+    bubbles = {}
 end
 
 -- love.draw function
@@ -85,7 +87,7 @@ function love.draw()
                 v.scale, v.scale, v.width / 2, v.height / 2)
         end
 
-        for _, v in ipairs(bullets) do
+        for _, v in ipairs(bubbles) do
             love.graphics.draw(v.image, v.x, v.y, 0, 1, 1, v.width / 2, v.height / 2)
         end
     end
@@ -99,9 +101,10 @@ function love.keypressed(key)
     end
     
     if key == "space" and player_soap and not player_soap.dead then
-        local bullet = Bullet:new(player_soap)
-        table.insert(bullets, bullet)
-        -- love.audio.play(bullet_sound)
+        local bubble = Bubble:new(player_soap)
+        -- local bubble = bubble:new(player_soap)
+        table.insert(bubbles, bubble)
+        -- love.audio.play(bubble_sound)
     end
 end
 
@@ -191,7 +194,7 @@ function love.update(dt)
         if player_soap then
         update_obj(player_soap, dt)
             if love.keyboard.isDown("space") then
-                love.audio.play(bullet_sound)
+                love.audio.play(bubble_sound)
             end
 
             if love.keyboard.isDown("left") then
@@ -229,7 +232,7 @@ function love.update(dt)
             v.rotation = v.rotation + v.rotate_speed * dt
         end
         
-        for _, v in ipairs(bullets) do
+        for _, v in ipairs(bubbles) do
             update_obj(v, dt)
         end
 
@@ -243,7 +246,7 @@ function love.update(dt)
             table.insert(objects, v)
         end
         
-        for _, v in ipairs(bullets) do
+        for _, v in ipairs(bubbles) do
             table.insert(objects, v)
         end
 
@@ -266,17 +269,17 @@ function love.update(dt)
         end
         
         local temp_viruss = {}
-        local temp_bullets = {}
+        local temp_bubbles = {}
         
         for _, v in ipairs(objects) do
-            if v.is_bullet == true then
+            if v.is_bubble == true then
                 v.survival = v.survival + dt
                 if v.survival < 0.5 and not v.dead then
-                    table.insert(temp_bullets, v)
+                    table.insert(temp_bubbles, v)
                 end
             end
             
-            if v.is_bullet == false then
+            if v.is_bubble == false then
                 if not v.dead then
                     table.insert(temp_viruss, v)
                 else
@@ -286,7 +289,7 @@ function love.update(dt)
         end
         
         viruss = temp_viruss
-        bullets = temp_bullets
+        bubbles = temp_bubbles
 
         if player_soap == nil then
             if life > 1  then

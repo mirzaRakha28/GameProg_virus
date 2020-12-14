@@ -1,4 +1,5 @@
---[[ the virus class ]]
+-- Class for virus
+
 local util = require("util")
 
 math.randomseed(os.time())
@@ -11,7 +12,7 @@ t.x = 0
 t.y = 0
 t.dead = false
 t.scale = 1
-t.is_bullet = false
+t.is_bubble = false
 
 function t:new(obj)
     obj = obj or {}

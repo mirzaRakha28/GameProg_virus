@@ -1,18 +1,20 @@
+-- For collison (tubrukan)
+
 local t = {}
 local Util = require("util")
 function t:collide(obj1, obj2)
-    -- only (bullet, asteroid) (player, asteroid) could collide
-    if obj1.is_bullet == false and obj2.is_bullet == false then
-        return false -- (asteroid, asteroid)
+    -- only (bubble, virus) (player, virus) could collide
+    if obj1.is_bubble == false and obj2.is_bubble == false then
+        return false -- (virus, virus)
     end
-    if obj1.is_bullet == true and obj2.is_bullet == true then
-        return false -- (bullet, bullet)
+    if obj1.is_bubble == true and obj2.is_bubble == true then
+        return false -- (bubble, bubble)
     end
-    if obj1.is_bullet == true and obj2.is_bullet == nil then
-        return false -- (bullet, player)
+    if obj1.is_bubble == true and obj2.is_bubble == nil then
+        return false -- (bubble, player)
     end
-    if obj1.is_bullet == nil and obj2.is_bullet == true then
-        return false -- (player, bullet)
+    if obj1.is_bubble == nil and obj2.is_bubble == true then
+        return false -- (player, bubble)
     end
     collision_dist = obj1.width / 2 + obj2.width / 2
     actual_dist = Util.distance(obj1.x, obj1.y, obj2.x, obj2.y)
