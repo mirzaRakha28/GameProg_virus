@@ -82,6 +82,20 @@ function love.draw()
     end
 end
 
+function love.keypressed(key)
+
+            if love.keyboard.isDown("m") then 
+                backsound:stop()
+            elseif love.keyboard.isDown("n") then
+                backsound:play()
+            end
+
+            if key == "space" and player_ship and not player_ship.dead then
+                local bullet = Bullet:new(player_ship)
+                table.insert(bullets, bullet)
+                -- love.audio.play(bullet_sound)
+            end
+    end
 
 function love.update(dt)
 

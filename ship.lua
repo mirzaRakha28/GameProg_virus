@@ -75,14 +75,16 @@ function buatObject (dt)
     end
 end
 
-        
-
 
 function t:playerShip (dt) 
 
 	if player_ship then
 	        	
 	    update_obj(player_ship, dt)
+
+        if love.keyboard.isDown("space") then
+                love.audio.play(bullet_sound)
+        end
 
 	    if love.keyboard.isDown("left") then
 	        player_ship.rotation = player_ship.rotation - player_ship.rotate_speed * dt
