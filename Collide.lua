@@ -1,3 +1,5 @@
+-- for colison
+
 local t = {}
 local Util = require("util")
 function t:collide(obj1, obj2)

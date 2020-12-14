@@ -1,4 +1,4 @@
---[[ the virus class ]]
+--class viruss 2 (only for gackkground)
 local util = require("util")
 
 math.randomseed(os.time())

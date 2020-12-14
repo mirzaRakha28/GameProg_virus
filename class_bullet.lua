@@ -1,4 +1,4 @@
---[[ the class of bullet ]]
+-- class bullet
 
 local t = {}
 t.image = love.graphics.newImage("resources/bullet.png")

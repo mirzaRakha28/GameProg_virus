@@ -1,4 +1,4 @@
---[[ the virus class ]]
+-- class virus
 local util = require("util")
 
 math.randomseed(os.time())

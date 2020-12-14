@@ -1,6 +1,4 @@
---[[
---util functions
-]]
+-- function util
 
 local M = {}
 
