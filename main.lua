@@ -11,7 +11,7 @@ local virus2 = require("class_virus2")
 local Bullet = require("class_bullet")
 local Collision = require("Collide")
 
-total_viruss = 103
+total_viruss = 10
 total_viruss2 = 120
 life = 3
 score = 0
@@ -96,7 +96,7 @@ function love.keypressed(key)
     if key == "space" and player_ship and not player_ship.dead then
         local bullet = Bullet:new(player_ship)
         table.insert(bullets, bullet)
-        love.audio.play(bullet_sound)
+        -- love.audio.play(bullet_sound)
     end
 end
 
@@ -177,6 +177,10 @@ function love.update(dt)
 
         if player_ship then
         update_obj(player_ship, dt)
+            if love.keyboard.isDown("space") then
+                love.audio.play(bullet_sound)
+            end
+
             if love.keyboard.isDown("left") then
                 player_ship.rotation = player_ship.rotation - player_ship.rotate_speed * dt
             end
