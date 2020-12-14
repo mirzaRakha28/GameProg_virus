@@ -5,16 +5,23 @@ local awesomequit = love.graphics.newImage('resources/awesomequit.jpg')
 local gameovertryagain = love.graphics.newImage('resources/gameovertryagain.jpg')
 local gameoverquit = love.graphics.newImage('resources/gameoverquit.jpg')
 local background = love.graphics.newImage('resources/background.jpg')
-local Player = require("class_player")
-local virus = require("class_virus")
-local virus2 = require("class_virus2")
-local Bullet = require("class_bullet")
-local Collision = require("Collide")
-total_viruss = 103
-total_viruss2 = 120
+
+Player = require("class_player")
+virus = require("class_virus")
+virus2 = require("class_virus2")
+Bullet = require("class_bullet")
+Collision = require("Collide")
+state = require ("game_state")
+ship = require ("ship")
+
+
+total_viruss = 10
+total_viruss2 = 12
 life = 3
 score = 0
 stage = 1
+timer = 60
+
 function love.load()
     gamestate = "title"
     main_font = love.graphics.newFont(15)
@@ -48,8 +55,9 @@ function love.draw()
         love.graphics.draw(awesomequit, 0, 0)
     elseif gamestate == "play" then
         love.graphics.draw(background, 0, 0)
-        love.graphics.print("LIFE : " .. life.."", 10, 25)
-        love.graphics.print("SCORE  : " .. score, 10, 50)
+        love.graphics.print("LIFE  : " .. life.."", 10, 25)
+        love.graphics.print("SCORE : " .. score, 10, 50)
+        love.graphics.print("TIME REMAINING  : " .. math.floor(timer), 10, 75)
         love.graphics.print("STAGE " .. stage, 350, 25)
         love.graphics.print("PRESS M TO MUTE", 630, 25)
         love.graphics.print("PRESS N TO UNMUTE", 630, 50)
@@ -72,186 +80,38 @@ function love.draw()
             love.graphics.draw(v.image, v.x, v.y, 0, 1, 1, v.width / 2, v.height / 2)
         end
     end
-    end
+end
+
+
 function love.update(dt)
+
     if gamestate == "title" then
-        if love.keyboard.isDown("return") then
-            gamestate = "play"
-            viruss = virus:load_viruss(total_viruss)
-            life = 3
-            score = 0
-        elseif love.keyboard.isDown("down") then
-            gamestate = "titlequit"
-        end
+        state:titleState()
+
     elseif gamestate == "titlequit" then
-        if 
-            love.keyboard.isDown("return") then
-            love.event.quit() 
-        elseif love.keyboard.isDown("up") then
-            gamestate = "title"
-        end
+        state:titleQuitState()
     end
 
     if gamestate == "restart" then
-        if love.keyboard.isDown("return") then
-            gamestate = "play"
-            player_ship = Player:new(nil)
-            total_viruss = 10
-            viruss = virus:load_viruss(total_viruss)
-            life = 3
-            score = 0
-            stage = 1
-            gameoversound:stop()
-            backsound:setLooping(true)
-            backsound:play()
-        elseif love.keyboard.isDown("down") then
-            gamestate = "restartquit"
-        end
+        state:restartState()
+
     elseif gamestate == "restartquit" then
-        if 
-            love.keyboard.isDown("return") then
-            love.event.quit() 
-        elseif love.keyboard.isDown("up") then
-            gamestate = "restart"
-        end
-
-    elseif gamestate == "winner" then
-        if love.keyboard.isDown("return") then
-            gamestate = "play"
-            player_ship = Player:new(nil)
-            total_viruss = total_viruss + 2
-            viruss = virus:load_viruss(total_viruss)
-            winnersound:stop()
-            backsound:setLooping(true)
-            backsound:play()
-        elseif love.keyboard.isDown("down") then
-            gamestate = "winnerquit"
-        end
-    elseif gamestate == "winnerquit" then
-        if 
-            love.keyboard.isDown("return") then
-            love.event.quit() 
-        elseif love.keyboard.isDown("up") then
-            gamestate = "winner"
-        end
-    elseif gamestate == "play" then
-        function love.keypressed(key)
-        if love.keyboard.isDown("m") then 
-            backsound:stop()
-        elseif love.keyboard.isDown("n") then
-            backsound:play()
-        end
-        if key == "space" and player_ship and not player_ship.dead then
-            local bullet = Bullet:new(player_ship)
-            table.insert(bullets, bullet)
-            love.audio.play(bullet_sound)
-            end
-        end
-        if player_ship then
-            update_obj(player_ship, dt)
-            if love.keyboard.isDown("left") then
-                player_ship.rotation = player_ship.rotation - player_ship.rotate_speed * dt
-            end
-            if love.keyboard.isDown("right") then
-                player_ship.rotation = player_ship.rotation + player_ship.rotate_speed * dt
-            end
-
-            if love.keyboard.isDown("up") then
-                angle_radians = math.rad(player_ship.rotation)
-                force_x = math.cos(angle_radians) * player_ship.thrust * dt
-                force_y = math.sin(angle_radians) * player_ship.thrust * dt
-                player_ship.velocity_x = player_ship.velocity_x + force_x
-                player_ship.velocity_y = player_ship.velocity_y + force_y
-            end
-
-             if love.keyboard.isDown("down") then
-                angle_radians = math.rad(player_ship.rotation)
-                force_x = math.cos(angle_radians) * player_ship.thrust * dt
-                force_y = math.sin(angle_radians) * player_ship.thrust * dt
-                player_ship.velocity_x = player_ship.velocity_x - force_x
-                player_ship.velocity_y = player_ship.velocity_y - force_y
-            end
-
-        end
-        for _, v in ipairs(viruss) do
-            update_obj(v, dt)
-            v.rotation = v.rotation + v.rotate_speed * dt
-        end
-        for _, v in ipairs(viruss2) do
-            update_obj(v, dt)
-            v.rotation = v.rotation + v.rotate_speed * dt
-        end
-        for _, v in ipairs(bullets) do
-            update_obj(v, dt)
-        end
-
-        objects = {}
-        if player_ship then
-            table.insert(objects, player_ship)
-        end
-        for _, v in ipairs(viruss) do
-            table.insert(objects, v)
-        end
-        for _, v in ipairs(bullets) do
-            table.insert(objects, v)
-        end
-
-        for i = 1, #objects do
-            for j = i+1, #objects do
-                obj_1 = objects[i]
-                obj_2 = objects[j]
-                if not obj_1.dead and not obj_2.dead then
-                    if Collision:collide(obj_1, obj_2) then
-                        obj_1.dead = true
-                        obj_2.dead = true
-                    end
-                end
-            end
-        end
-        
-        if player_ship and player_ship.dead then
-            player_ship = nil
-
-        end
-        local temp_viruss = {}
-        local temp_bullets = {}
-        for _, v in ipairs(objects) do
-            if v.is_bullet == true then
-                v.survival = v.survival + dt
-                if v.survival < 0.5 and not v.dead then
-                    table.insert(temp_bullets, v)
-                end
-            end
-            if v.is_bullet == false then
-                if not v.dead then
-                    table.insert(temp_viruss, v)
-                else
-                    score = score + 1
-                end
-            end
-        end
-        viruss = temp_viruss
-        bullets = temp_bullets
-
-        if player_ship == nil then
-            if life > 1  then
-                life = life - 1
-                player_ship = Player:new(player_ship)
-            else
-                gamestate = "restart"
-                backsound:stop()
-                gameoversound:play()
-                return
-            end
-        elseif not player_ship.dead and #viruss == 0 then
-                gamestate = "winner"
-                stage = stage + 1
-                backsound:stop()
-                winnersound:play()
-                return
-        end
+    	state:restartQuitState()
     end
-      end
+
+    if gamestate == "winner" then
+        state:winnerState()
+
+    elseif gamestate == "winnerquit" then
+        state:winnerQuitState()
+    end
+
+    if gamestate == "play" then
+    	state:playState(dt)
+    	ship:playerShip(dt)   
+    end
+
+end  
     
 function update_player(dt)
     local player = player_ship
@@ -270,29 +130,6 @@ function update_player(dt)
         force_y = math.sin(angle_radians) * player.thrust * dt
         player.velocity_x = player.velocity_x + force_x
         player.velocity_y = player.velocity_y + force_y
-    end
-end
-
-function update_obj(obj, dt)
-    obj.x = obj.x + obj.velocity_x * dt
-    obj.y = obj.y + obj.velocity_y * dt
-    check_bounds(obj)
-end
-
-function check_bounds(obj)
-    min_x = -obj.width / 2
-    min_y = -obj.height / 2
-    max_x = 800 + obj.width / 2
-    max_y = 600 + obj.height / 2
-    if obj.x < min_x then
-        obj.x = max_x
-    elseif obj.x > max_x then
-        obj.x = min_x
-    end
-    if obj.y < min_y then
-        obj.y = max_y
-    elseif obj.y > max_y then
-        obj.y = min_y
     end
 end
 
