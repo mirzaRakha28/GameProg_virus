@@ -11,13 +11,16 @@ local virus2 = require("class_virus2")
 local Bullet = require("class_bullet")
 local Collision = require("Collide")
 
+-- varieble"
 total_viruss = 10
 total_viruss2 = 120
 life = 3
 score = 0
 stage = 1
+timer = 60
 
 
+-- love.load function
 function love.load()
     gamestate = "title"
     main_font = love.graphics.newFont(15)
@@ -36,6 +39,7 @@ function love.load()
     bullets = {}
 end
 
+-- love.draw function
 function love.draw()
 
     if gamestate == "title" 
@@ -61,6 +65,7 @@ function love.draw()
         love.graphics.draw(background, 0, 0)
         love.graphics.print("LIFE : " .. life.."", 10, 25)
         love.graphics.print("SCORE  : " .. score, 10, 50)
+        love.graphics.print("REMAINING TIME  : " .. math.floor(timer), 10, 75)
         love.graphics.print("STAGE " .. stage, 350, 25)
         love.graphics.print("PRESS M TO MUTE", 630, 25)
         love.graphics.print("PRESS N TO UNMUTE", 630, 50)
@@ -174,6 +179,14 @@ function love.update(dt)
     if gamestate == "play" then
 
         -- love.keypressed(key);
+        if timer <= 0 or #viruss == 0 then
+            gamestate = "restart"
+            backsound:stop()
+            gameoversound:play()
+            timer =60
+        end
+        
+        timer = timer - dt
 
         if player_ship then
         update_obj(player_ship, dt)
@@ -283,6 +296,7 @@ function love.update(dt)
                 gamestate = "restart"
                 backsound:stop()
                 gameoversound:play()
+                timer =60
                 return
             end
 
@@ -291,6 +305,7 @@ function love.update(dt)
             stage = stage + 1
             backsound:stop()
             winnersound:play()
+            timer =60
             return
         end
 
