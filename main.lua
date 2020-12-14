@@ -33,9 +33,9 @@ function love.load()
     gameoversound = love.audio.newSource("resources/gameoversound.mp3", "stream")
     bullet_sound = love.audio.newSource("resources/bullet.wav", "static")
     player_image = love.graphics.newImage("resources/player.png")
-    player_ship = Player:new(nil)
-    viruss = virus:load_viruss(total_viruss, player_ship.x, player_ship.y)
-    viruss2 = virus2:load_viruss(total_viruss2, player_ship.x, player_ship.y)
+    player_soap = Player:new(nil)
+    viruss = virus:load_viruss(total_viruss, player_soap.x, player_soap.y)
+    viruss2 = virus2:load_viruss(total_viruss2, player_soap.x, player_soap.y)
     bullets = {}
 end
 
@@ -70,9 +70,9 @@ function love.draw()
         love.graphics.print("PRESS M TO MUTE", 630, 25)
         love.graphics.print("PRESS N TO UNMUTE", 630, 50)
 
-        if player_ship then
-            love.graphics.draw(player_ship.image, player_ship.x, player_ship.y, math.rad(player_ship.rotation), 
-                1, 1, player_ship.width / 2, player_ship.height / 2)
+        if player_soap then
+            love.graphics.draw(player_soap.image, player_soap.x, player_soap.y, math.rad(player_soap.rotation), 
+                1, 1, player_soap.width / 2, player_soap.height / 2)
         end
 
         for _, v in ipairs(viruss) do
@@ -98,8 +98,8 @@ function love.keypressed(key)
         backsound:play()
     end
     
-    if key == "space" and player_ship and not player_ship.dead then
-        local bullet = Bullet:new(player_ship)
+    if key == "space" and player_soap and not player_soap.dead then
+        local bullet = Bullet:new(player_soap)
         table.insert(bullets, bullet)
         -- love.audio.play(bullet_sound)
     end
@@ -133,7 +133,7 @@ function love.update(dt)
 
         if love.keyboard.isDown("return") then
             gamestate = "play"
-            player_ship = Player:new(nil)
+            player_soap = Player:new(nil)
             total_viruss = 10
             viruss = virus:load_viruss(total_viruss)
             life = 3
@@ -158,7 +158,7 @@ function love.update(dt)
 
         if love.keyboard.isDown("return") then
             gamestate = "play"
-            player_ship = Player:new(nil)
+            player_soap = Player:new(nil)
             total_viruss = total_viruss + 2
             viruss = virus:load_viruss(total_viruss)
             winnersound:stop()
@@ -188,33 +188,33 @@ function love.update(dt)
         
         timer = timer - dt
 
-        if player_ship then
-        update_obj(player_ship, dt)
+        if player_soap then
+        update_obj(player_soap, dt)
             if love.keyboard.isDown("space") then
                 love.audio.play(bullet_sound)
             end
 
             if love.keyboard.isDown("left") then
-                player_ship.rotation = player_ship.rotation - player_ship.rotate_speed * dt
+                player_soap.rotation = player_soap.rotation - player_soap.rotate_speed * dt
             end
             if love.keyboard.isDown("right") then
-                player_ship.rotation = player_ship.rotation + player_ship.rotate_speed * dt
+                player_soap.rotation = player_soap.rotation + player_soap.rotate_speed * dt
             end
 
             if love.keyboard.isDown("up") then
-                angle_radians = math.rad(player_ship.rotation)
-                force_x = math.cos(angle_radians) * player_ship.thrust * dt
-                force_y = math.sin(angle_radians) * player_ship.thrust * dt
-                player_ship.velocity_x = player_ship.velocity_x + force_x
-                player_ship.velocity_y = player_ship.velocity_y + force_y
+                angle_radians = math.rad(player_soap.rotation)
+                force_x = math.cos(angle_radians) * player_soap.thrust * dt
+                force_y = math.sin(angle_radians) * player_soap.thrust * dt
+                player_soap.velocity_x = player_soap.velocity_x + force_x
+                player_soap.velocity_y = player_soap.velocity_y + force_y
             end
 
             if love.keyboard.isDown("down") then
-                angle_radians = math.rad(player_ship.rotation)
-                force_x = math.cos(angle_radians) * player_ship.thrust * dt
-                force_y = math.sin(angle_radians) * player_ship.thrust * dt
-                player_ship.velocity_x = player_ship.velocity_x - force_x
-                player_ship.velocity_y = player_ship.velocity_y - force_y
+                angle_radians = math.rad(player_soap.rotation)
+                force_x = math.cos(angle_radians) * player_soap.thrust * dt
+                force_y = math.sin(angle_radians) * player_soap.thrust * dt
+                player_soap.velocity_x = player_soap.velocity_x - force_x
+                player_soap.velocity_y = player_soap.velocity_y - force_y
             end
 
         end
@@ -235,8 +235,8 @@ function love.update(dt)
 
         objects = {}
         
-        if player_ship then
-            table.insert(objects, player_ship)
+        if player_soap then
+            table.insert(objects, player_soap)
         end
         
         for _, v in ipairs(viruss) do
@@ -261,8 +261,8 @@ function love.update(dt)
             end
         end
 
-        if player_ship and player_ship.dead then
-            player_ship = nil
+        if player_soap and player_soap.dead then
+            player_soap = nil
         end
         
         local temp_viruss = {}
@@ -288,10 +288,10 @@ function love.update(dt)
         viruss = temp_viruss
         bullets = temp_bullets
 
-        if player_ship == nil then
+        if player_soap == nil then
             if life > 1  then
                 life = life - 1
-                player_ship = Player:new(player_ship)
+                player_soap = Player:new(player_soap)
             else
                 gamestate = "restart"
                 backsound:stop()
@@ -300,7 +300,7 @@ function love.update(dt)
                 return
             end
 
-        elseif not player_ship.dead and #viruss == 0 then
+        elseif not player_soap.dead and #viruss == 0 then
             gamestate = "winner"
             stage = stage + 1
             backsound:stop()
@@ -315,7 +315,7 @@ end
 
 
 function update_player(dt)
-    local player = player_ship
+    local player = player_soap
     update_obj(player, dt)
 
     if love.keyboard.isDown("left") then
